@@ -4,7 +4,7 @@
 #X obj 20 352 send InFile;
 #X obj 21 430 send OutFile;
 #X text 53 25 Click to Start;
-#N canvas 615 17 581 921 Test 0;
+#N canvas 615 17 581 921 Test 1;
 #X obj 174 74 r InFile;
 #X obj 198 499 r OutFile;
 #X obj 11 9 r startbang;
@@ -28,12 +28,12 @@
 #X obj -6 14 +~;
 #X obj -6 47 sqrt~;
 #X obj -5 76 lp10_butt~ 3;
-#X obj -3 133 hp2_butt~ 2;
-#X obj -4 162 *~ 30;
 #X obj -9 -111 hp10_butt~ 24;
 #X obj -8 -77 lp10_butt~ 44;
-#X connect 1 0 12 0;
-#X connect 3 0 10 0;
+#X obj -4 162 *~ 300;
+#X obj -3 133 hp2_butt~ 2;
+#X connect 1 0 10 0;
+#X connect 3 0 13 0;
 #X connect 4 0 5 0;
 #X connect 4 0 5 1;
 #X connect 4 1 6 0;
@@ -44,14 +44,14 @@
 #X connect 8 0 9 0;
 #X connect 9 0 3 0;
 #X connect 10 0 11 0;
-#X connect 11 0 2 0;
-#X connect 12 0 13 0;
-#X connect 13 0 4 0;
+#X connect 11 0 4 0;
+#X connect 12 0 2 0;
+#X connect 13 0 12 0;
 #X restore -231 103 pd detector;
 #X obj -232 217 sig~;
 #X obj -233 321 outlet~;
 #X msg -232 167 1;
-#X msg -115 163 -1;
+#X msg -109 162 -1;
 #X obj -32 244 float;
 #X obj 43 245 + 1;
 #X obj -32 319 outlet;
@@ -67,11 +67,11 @@
 -1 -1;
 #X msg 204 213 bufsize 500;
 #X obj -231 75 lop~ 20;
-#X obj -232 133 threshold~ 1 10 0 10;
 #X obj 204 126 loadbang;
+#X obj -232 133 threshold~ 1 10 -1 10;
 #X connect 0 0 11 0;
 #X connect 1 0 15 0;
-#X connect 1 0 19 0;
+#X connect 1 0 20 0;
 #X connect 2 0 3 0;
 #X connect 4 0 2 0;
 #X connect 5 0 2 0;
@@ -88,17 +88,17 @@
 #X connect 16 0 17 0;
 #X connect 17 0 15 0;
 #X connect 18 0 1 0;
-#X connect 19 0 4 0;
-#X connect 19 0 6 0;
-#X connect 19 1 5 0;
-#X connect 20 0 16 0;
+#X connect 19 0 16 0;
+#X connect 20 0 4 0;
+#X connect 20 0 6 0;
+#X connect 20 1 5 0;
 #X restore 187 448 pd pulsedetector;
 #X obj 225 179 s stopbang;
 #X obj 264 613 r stopbang;
 #X msg 264 643 stop;
 #X obj 288 499 / 2;
 #X obj 319 520 s beats;
-#N canvas 448 394 538 524 simulator 0;
+#N canvas 616 374 538 524 simulator 0;
 #X obj 30 28 inlet~;
 #X obj 178 29 inlet;
 #X obj 363 31 inlet;
@@ -122,7 +122,7 @@
 #X obj 287 172 + 0;
 #X obj 152 426 env~;
 #X obj 274 474 nbx 8 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
--262144 -1 -1 0 256;
+-262144 -1 -1 10.3544 256;
 #X obj 31 216 hip~;
 #X obj 235 73 hip~;
 #X connect 0 0 22 0;
@@ -192,14 +192,13 @@
 #X obj 20 512 s startbang;
 #X floatatom 299 51 5 0 0 0 - beats -;
 #X text 297 27 Counted Beats;
-#X msg 21 403 open Out10dBHeartbeat.wav;
 #X obj 20 301 r ready;
 #X obj 21 380 r ready;
 #X obj 20 459 r ready;
 #X obj 23 82 hsl 128 15 1 400 0 1 lowcutoff empty empty -2 -8 0 10
--262144 -1 -1 12700 1;
+-262144 -1 -1 0 1;
 #X obj 21 102 nbx 5 14 -1e+37 1e+37 0 0 empty lowcutoff empty 0 -8
-0 10 -262144 -1 -1 400 256;
+0 10 -262144 -1 -1 1 256;
 #X text 18 59 Microphone Hipass Cutoff;
 #X obj 22 227 hsl 128 15 -90 0 0 1 noiselevel empty empty -2 -8 0 10
 -262144 -1 -1 0 1;
@@ -217,9 +216,10 @@
 #X text 265 324 Input Filenname;
 #X text 263 403 Output Filenname;
 #X msg 20 327 open CleanHeartbeat.wav;
+#X msg 21 403 open OutHeartbeat.wav;
 #X connect 5 0 6 0;
-#X connect 9 0 2 0;
+#X connect 9 0 25 0;
 #X connect 10 0 26 0;
-#X connect 11 0 9 0;
-#X connect 12 0 5 0;
-#X connect 26 0 1 0;
+#X connect 11 0 5 0;
+#X connect 25 0 1 0;
+#X connect 26 0 2 0;
