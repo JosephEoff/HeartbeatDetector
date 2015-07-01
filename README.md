@@ -9,7 +9,7 @@ Current performance:
 
 1.  Level independency: Accurate count with input level from 0dB to -80dB with no manual adjustment
 2.  Noise rejection:  Accurate count with signal to noise ratio of 20dB
-3.  Accurate count despite 3dB per octave highpass filter in microphone.  Cutoof can be varied from 1 to 400Hz without decreasing accuracy.
+3.  Accurate count despite 3dB per octave highpass filter in microphone.  Cutoff can be varied from 1 to 400Hz without decreasing accuracy.
 
 High noise levels do not influence the count, but do cause inaccuracies in the onset detection.  
 
