@@ -1,10 +1,10 @@
-#N canvas 387 178 450 627 10;
+#N canvas 41 148 689 627 10;
 #X obj 21 30 bng 15 250 50 0 ready empty empty 17 7 0 10 -262144 -1
 -1;
 #X obj 20 352 send InFile;
 #X obj 21 430 send OutFile;
 #X text 53 25 Click to Start;
-#N canvas 615 17 581 921 Test 1;
+#N canvas 615 17 581 921 Test 0;
 #X obj 174 74 r InFile;
 #X obj 198 499 r OutFile;
 #X obj 11 9 r startbang;
@@ -17,7 +17,7 @@
 #X obj 250 553 r delaybang;
 #N canvas 237 216 902 692 pulsedetector 0;
 #X obj -230 11 inlet~;
-#N canvas 869 33 305 532 detector 1;
+#N canvas 869 33 305 532 detector 0;
 #X obj 102 -149 block~ 64 1 0.0625;
 #X obj -9 -142 inlet~;
 #X obj -3 190 outlet~;
@@ -104,7 +104,7 @@
 #X obj 363 31 inlet;
 #X obj 287 281 dbtorms;
 #X obj 363 135 nbx 8 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
--262144 -1 -1 10 256;
+-262144 -1 -1 79.4488 256;
 #X obj 30 438 outlet~;
 #X obj 31 362 +~;
 #X obj 236 29 noise~;
@@ -122,7 +122,7 @@
 #X obj 287 172 + 0;
 #X obj 152 426 env~;
 #X obj 274 474 nbx 8 14 -1e+37 1e+37 0 0 empty empty empty 0 -8 0 10
--262144 -1 -1 10.3544 256;
+-262144 -1 -1 62.0176 256;
 #X obj 31 216 hip~;
 #X obj 235 73 hip~;
 #X connect 0 0 22 0;
@@ -187,7 +187,7 @@
 #X connect 23 0 21 0;
 #X connect 24 0 22 0;
 #X connect 25 0 23 0;
-#X restore 321 228 pd Test;
+#X restore 496 228 pd Test;
 #X obj 20 487 delay 10;
 #X obj 20 512 s startbang;
 #X floatatom 299 51 5 0 0 0 - beats -;
@@ -196,27 +196,27 @@
 #X obj 21 380 r ready;
 #X obj 20 459 r ready;
 #X obj 23 82 hsl 128 15 1 400 0 1 lowcutoff empty empty -2 -8 0 10
--262144 -1 -1 0 1;
+-262144 -1 -1 6400 1;
 #X obj 21 102 nbx 5 14 -1e+37 1e+37 0 0 empty lowcutoff empty 0 -8
-0 10 -262144 -1 -1 1 256;
+0 10 -262144 -1 -1 202.071 256;
 #X text 18 59 Microphone Hipass Cutoff;
 #X obj 22 227 hsl 128 15 -90 0 0 1 noiselevel empty empty -2 -8 0 10
--262144 -1 -1 0 1;
+-262144 -1 -1 9800 1;
 #X obj 19 249 nbx 5 14 -1e+37 1e+37 0 0 empty noiselevel empty 0 -8
-0 10 -262144 -1 -1 -90 256;
+0 10 -262144 -1 -1 -20.5512 256;
 #X obj 21 153 hsl 128 15 0 -80 0 1 micattenuation empty empty -2 -8
-0 10 -262144 -1 -1 0 1;
+0 10 -262144 -1 -1 3200 1;
 #X text 17 129 Microphone Attenuation;
 #X obj 18 176 nbx 5 14 -1e+37 1e+37 0 0 empty micattenuation empty
-0 -8 0 10 -262144 -1 -1 0 256;
+0 -8 0 10 -262144 -1 -1 -20.1575 256;
 #X text 16 202 Noise Level relative to signal;
 #X obj 189 28 tgl 15 0 empty running empty 17 7 0 10 -262144 -1 -1
 0 1;
 #X text 212 23 Running;
-#X text 265 324 Input Filenname;
-#X text 263 403 Output Filenname;
+#X text 440 324 Input Filenname;
+#X text 438 403 Output Filenname;
 #X msg 20 327 open CleanHeartbeat.wav;
-#X msg 21 403 open OutHeartbeat.wav;
+#X msg 21 403 open -bytes 4 Output.wav;
 #X connect 5 0 6 0;
 #X connect 9 0 25 0;
 #X connect 10 0 26 0;

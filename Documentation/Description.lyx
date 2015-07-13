@@ -1,0 +1,604 @@
+#LyX 1.6.5 created this file. For more info see http://www.lyx.org/
+\lyxformat 345
+\begin_document
+\begin_header
+\textclass article
+\use_default_options true
+\language english
+\inputencoding auto
+\font_roman default
+\font_sans default
+\font_typewriter default
+\font_default_family default
+\font_sc false
+\font_osf false
+\font_sf_scale 100
+\font_tt_scale 100
+
+\graphics default
+\float_placement p
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry false
+\use_amsmath 1
+\use_esint 1
+\cite_engine basic
+\use_bibtopic false
+\paperorientation portrait
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\defskip medskip
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\author "" 
+\author "" 
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Heartbeat Detection
+\end_layout
+
+\begin_layout Author
+Joseph R.
+ Eoff
+\end_layout
+
+\begin_layout Date
+07/10/2015
+\end_layout
+
+\begin_layout Section
+Goal
+\end_layout
+
+\begin_layout Standard
+Reliable heartbeat detector for a personal training app for Android smartphones.
+\end_layout
+
+\begin_layout Standard
+Requirements:
+\end_layout
+
+\begin_layout Enumerate
+Simple
+\end_layout
+
+\begin_layout Enumerate
+Robust
+\end_layout
+
+\begin_layout Enumerate
+Good noise rejection
+\end_layout
+
+\begin_layout Enumerate
+No user intervention/adjustment required
+\end_layout
+
+\begin_layout Enumerate
+Must use the microphone from a typical Android head set (wired earphone/micropho
+ne headset.)
+\end_layout
+
+\begin_layout Section
+Software
+\end_layout
+
+\begin_layout Standard
+Development of an algorithm that can be implemented in Java, but capable
+ of running in real time.
+\end_layout
+
+\begin_layout Standard
+PureData will be used to develop the algorithm on a desktop PC.
+ The final, functional algorithm will be translated to Java.
+ Intermediate tests can be made using the PD patches from the desktop environmen
+t on Android with libPD.
+\end_layout
+
+\begin_layout Subsection
+Algorithm
+\end_layout
+
+\begin_layout Standard
+The basic algorithm is a Hilbert amplitude detector, but with some pre and
+ post processing based on observations of typical heartbeat signals.
+ Figure
+\begin_inset CommandInset ref
+LatexCommand vref
+reference "fig:Beat-detector"
+
+\end_inset
+
+ is a block diagram of the method.
+ It is also a valid PureData patch.
+\end_layout
+
+\begin_layout Standard
+The preprocessing consists of a bandpass filter from 24Hz to 44Hz.
+ This is based on the observation that a heartbeat consists of a sharp 
+\begin_inset Quotes eld
+\end_inset
+
+snap
+\begin_inset Quotes erd
+\end_inset
+
+ (broadband spike) and a low frequency 
+\begin_inset Quotes eld
+\end_inset
+
+lub
+\begin_inset Quotes erd
+\end_inset
+
+ at around 34Hz.
+ The broadband 
+\begin_inset Quotes eld
+\end_inset
+
+snap
+\begin_inset Quotes erd
+\end_inset
+
+ is difficult to separate from broadband noise, but the low frequency 
+\begin_inset Quotes eld
+\end_inset
+
+lub
+\begin_inset Quotes erd
+\end_inset
+
+ is relatively easy to separate from noise.
+\end_layout
+
+\begin_layout Standard
+The post processing begins a low pass filter to remove amplitude variations
+ that can occur within the beat.
+ In the next step, the logarithm of the instantaneous amplitude is calculated.
+ The final step is a highpass filter with a cutoff of 2Hz.
+ These three steps have the effect of only passing relatively sudden jumps
+ in amplitude, and making the level of the jump independent of the absolute
+ level.
+ A highpass filter after the Hilbert transform by itself would result in
+ pulses whose amplitude is proportional to the absolute level.
+ Taking the log makes the amplitude of the 
+\begin_inset Quotes eld
+\end_inset
+
+jump
+\begin_inset Quotes erd
+\end_inset
+
+ more or less constant regardless of the true amplitude.
+ 
+\end_layout
+
+\begin_layout Standard
+At this point, the amplitude of the jump is independent of the true volume.
+ It is, however, dependent on the signal to noise ratio.
+ A constant noise creates the equivalent of a DC offset in the instantaneous
+ amplitude.
+ The high pass removes that DC offset, leaving only the variations.
+ The lower the signal to noise ratio, the closer the output of the high
+ pass will be to zero.
+ Amplifying the signal at this point allows the pulses to be detected at
+ lower signal to noise ratios.
+\end_layout
+
+\begin_layout Standard
+After amplification, a threshold function is applied to provide a clean
+ indication of a detected beat.
+\end_layout
+
+\begin_layout Standard
+This method is very good at picking pulses out of noise.
+ At high noise levels, however, the beginning and end of the generated pulses
+ will not be aligned with the peaks of the heartbeat pulses.
+ Thus, at high noise levels you cannot calculate the heart beat rate from
+ the time between pulses.
+ Counting the number of pulses in a given time period (or the time for a
+ given number of pulses) will give an accurate heart rate, however.
+ This method can only measure heart rate variability at high signal to noise
+ ratios.
+\end_layout
+
+\begin_layout Standard
+This method has two disadvantages.
+ One is the already mentioned random offset of the beginning and end of
+ each pulse when the signal to noise ration is low.
+ The other is that the amplification that allows the method to work in poor
+ conditions also leads to false pulse detection when there is no signal.
+ That is, if there is noise but no heart beat then this method will produce
+ random pulses.
+ It can therefore only be used when it is certain that there is a signal
+ to be found in the noise.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Beat-detector"
+
+\end_inset
+
+Beat detector
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Detector.png
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Section
+Current state
+\end_layout
+
+\begin_layout Enumerate
+Test program for Android that can use PD Patches.
+ Audio input and output, minimal strip chart and heart rate display.
+\end_layout
+
+\begin_layout Enumerate
+Functional PD patch that detects heart beats and counts the heart rate.
+\end_layout
+
+\begin_layout Enumerate
+Requirements met:
+\end_layout
+
+\begin_deeper
+\begin_layout Enumerate
+Simple - beat detection is straight forward, runs on a slow Android phone,
+ CPU load stays below 90%
+\end_layout
+
+\begin_layout Enumerate
+Robust - insensitive to input level, hardware, frequency response
+\end_layout
+
+\begin_layout Enumerate
+Good noise rejection - handles noise well.
+ Heart beat is still well detected at 20dB signal to noise ratio.
+\end_layout
+
+\begin_layout Enumerate
+No user intervention/adjustment required - insensitivity to level and noise
+ means that the user doesn't have to adjust anything for proper function.
+\end_layout
+
+\begin_layout Enumerate
+Hardware - works on the desktop system with a simple stethoscope as well
+ as with a smartphone headset.
+ No adjustment needed when changing hardware.
+\end_layout
+
+\end_deeper
+\begin_layout Section
+Results
+\end_layout
+
+\begin_layout Subsection
+Test program
+\end_layout
+
+\begin_layout Standard
+All examples were created using the test program 
+\begin_inset Quotes eld
+\end_inset
+
+DetectorTest.pd
+\begin_inset Quotes erd
+\end_inset
+
+ with the file 
+\begin_inset Quotes eld
+\end_inset
+
+CleanHeartbeat.wav
+\begin_inset Quotes erd
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Quotes eld
+\end_inset
+
+DetectorTest.pd
+\begin_inset Quotes erd
+\end_inset
+
+ reads the input file, passes the signal through a simulator that attenuates
+ the signal, high pass filters it, then adds in a specified level of noise.
+ This simulates various input levels, noise levels, and the frequency response
+ of varying hardware.
+\end_layout
+
+\begin_layout Standard
+The simulated signal then goes through the same heartbeat detector as is
+ used in the Android app.
+ The simulated signal and the detected beats are then recombined into a
+ single .wav file.
+ The left channel is the simulated heartbeat, the right channel is the detected
+ beat.
+\end_layout
+
+\begin_layout Subsection
+Test program examples
+\end_layout
+
+\begin_layout Standard
+Figures 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Input-level-0dB"
+
+\end_inset
+
+ through 
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "fig:Input-level--20dB"
+
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+The file 
+\begin_inset Quotes eld
+\end_inset
+
+CleanHeartbeat.wav
+\begin_inset Quotes erd
+\end_inset
+
+ contains a 30 second long recording of a normal heartbeat.
+ The figures show the simulator settings used to create the example.
+ 
+\end_layout
+
+\begin_layout Standard
+Input level is the attenuation applied to the original signal.
+\end_layout
+
+\begin_layout Standard
+Noise level is the amount of noise relative to the attenuated microphone
+ signal.
+ If the input level is set to -20dB and noise level is -20 dB, then the
+ noise is 40dB below full scale.
+\end_layout
+
+\begin_layout Standard
+The highpass value gives the cutoff frequency for a highpass filter that
+ simulates the typical frequency response of a smartphone.
+ Some phones (such as the iPhone) have very low cutoffs while others may
+ have a cutoff near 300Hz.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Input-level-0dB"
+
+\end_inset
+
+Input level 0dB Noise level -90dB Highpass 1Hz
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Level0dB_Noise-90dB_1HzHeartbeat.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Input level -80dB Noise level -90dB Highpass 200Hz
+\end_layout
+
+\end_inset
+
+
+\begin_inset Graphics
+	filename Level0dB_Noise-90dB_200HzHeartbeat.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Input level -80dB Noise level -90dB Highpass 1Hz
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Level-80dB_Noise-90dB_1HzHeartbeat.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+Input level -10dB Noise level -30dB Highpass 200Hz
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Level-10dB_Noise-30dB_200HzHeartbeat.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+
+\begin_inset Float figure
+wide false
+sideways false
+status open
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\begin_layout Plain Layout
+\align center
+\begin_inset Caption
+
+\begin_layout Plain Layout
+\begin_inset CommandInset label
+LatexCommand label
+name "fig:Input-level--20dB"
+
+\end_inset
+
+Input level -20dB Noise level -20dB Highpass 200Hz
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+\begin_inset Graphics
+	filename Level-20dB_Noise-20dB_200HzHeartbeat.png
+	width 12cm
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Plain Layout
+
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\end_body
+\end_document
