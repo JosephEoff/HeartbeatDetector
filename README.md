@@ -1,4 +1,4 @@
-# HeatbeatDetector
+# HeartbeatDetector
 Test program for an algorithm to detect heartbeats using a microphone.
 
 DetectorTest.pd is a PureData patch to test an algorithm for detecting heartbeats using a microphone. 
